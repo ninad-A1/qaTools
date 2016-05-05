@@ -1,0 +1,1328 @@
+{
+  "host_docker": "192.168.99.100",
+  "port_auth": 7778,
+  "port_campaign": 9501,
+  "tenantid": 1,
+  "user": "uitest",
+  "passwd": "Agil1234",
+  "rootFolders": [
+    {
+      "mimeType": "text/directory",
+      "name": "CampaignDef",
+      "description": "Top folder"
+    },
+    {
+      "mimeType": "text/directory",
+      "name": "Playbooks",
+      "description": "Folder to hold playbooks"
+    },
+    {
+      "mimeType": "text/directory",
+      "name": "AudienceDefTemplates",
+      "description": "Folder to find audience def templates for audience rules"
+    },
+    {
+      "mimeType": "text/directory",
+      "name": "ContentModels",
+      "description": "Folder to find content models for campaign content"
+    }
+  ],
+  "datasetDefs": [
+    {
+      "name": "Customers who purchased a product in a category",
+      "description": "Purchased a product in category",
+      "version": 0,
+      "tenantId": 0,
+      "type": "CUSTOMER",
+      "input": {
+        "inputType": "ENTITY",
+        "entityName": "customersummary",
+        "filter": {
+          "datasetDefInput": {
+            "inputType": "ENTITY",
+            "entityName": "customer",
+            "filter": {
+              "datasetDefInput": {
+                "inputType": "ENTITY",
+                "entityName": "transaction",
+                "filter": {
+                  "operation": {
+                    "operator": "AND",
+                    "arguments": [
+                      {
+                        "operation": {
+                          "operator": "GREATER_THAN",
+                          "arguments": [
+                            {
+                              "attributes": [
+                                "total"
+                              ],
+                              "inputType": "ATTRIBUTES"
+                            },
+                            {
+                              "value": "100",
+                              "inputType": "VALUE"
+                            }
+                          ]
+                        },
+                        "inputType": "OPERATION"
+                      },
+                      {
+                        "datasetDefInput": {
+                          "inputType": "ENTITY",
+                          "entityName": "TransactionItem",
+                          "filter": {
+                            "datasetDefInput": {
+                              "inputType": "ENTITY",
+                              "entityName": "Product",
+                              "filter": {
+                                "datasetDefInput": {
+                                  "inputType": "ENTITY",
+                                  "entityName": "ProductCategory",
+                                  "filter": {
+                                    "operation": {
+                                      "operator": "EQUALS",
+                                      "arguments": [
+                                        {
+                                          "attributes": [
+                                            "name"
+                                          ],
+                                          "inputType": "ATTRIBUTES"
+                                        },
+                                        {
+                                          "operation": {
+                                            "operator": "PASSED_ARGUMENT",
+                                            "arguments": [
+                                              {
+                                                "value": "CATNAME",
+                                                "inputType": "VALUE"
+                                              }
+                                            ]
+                                          },
+                                          "inputType": "OPERATION"
+                                        }
+                                      ]
+                                    },
+                                    "inputType": "OPERATION"
+                                  }
+                                },
+                                "inputType": "DATASET_DEF_INPUT"
+                              },
+                              "interactionType": [
+                                "CRITERIA"
+                              ]
+                            },
+                            "inputType": "DATASET_DEF_INPUT"
+                          },
+                          "interactionType": [
+                            "CRITERIA"
+                          ]
+                        },
+                        "inputType": "DATASET_DEF_INPUT"
+                      }
+                    ]
+                  },
+                  "inputType": "OPERATION"
+                },
+                "interactionType": [
+                  "CRITERIA"
+                ]
+              },
+              "inputType": "DATASET_DEF_INPUT"
+            },
+            "interactionType": [
+              "CRITERIA"
+            ]
+          },
+          "inputType": "DATASET_DEF_INPUT"
+        },
+        "interactionType": [
+          "CRITERIA"
+        ],
+        "outputAttributes": [
+          {
+            "name": "MasterCustomerID",
+            "entity": "customersummary"
+          }
+        ],
+        "operation": {
+          "operator": "DISTINCT"
+        }
+      },
+      "isOpaque": true,
+      "arguments": [
+        {
+          "argumentName": "CATNAME",
+          "expression": {
+            "value": "'Wireless Speakers'",
+            "inputType": "VALUE"
+          }
+        }
+      ],
+      "displayElements": [
+        {
+          "displayType": "TEXT",
+          "displayText": "Purchased an item in category with name"
+        },
+        {
+          "displayType": "INPUT",
+          "dataType": "TEXT",
+          "argumentName": "CATNAME"
+        }
+      ],
+      "category": "AudienceDef",
+      "opaque": true,
+      "links": []
+    },
+    {
+      "name": "Customers who abandoned their cart",
+      "description": "Customers who abandoned their cart",
+      "version": 0,
+      "tenantId": 0,
+      "type": "CUSTOMER",
+      "input": {
+        "inputType": "ENTITY",
+        "entityName": "customersummary",
+        "filter": {
+          "datasetDefInput": {
+            "inputType": "ENTITY",
+            "entityName": "customer",
+            "interactionType": [
+              "CRITERIA"
+            ],
+            "setOperation": {
+              "operator": "EXCLUDE",
+              "arguments": [
+                {
+                  "datasetDefInput": {
+                    "inputType": "ENTITY",
+                    "entityName": "event",
+                    "filter": {
+                      "operation": {
+                        "operator": "AND",
+                        "arguments": [
+                          {
+                            "operation": {
+                              "operator": "GREATER_THAN",
+                              "arguments": [
+                                {
+                                  "attributes": [
+                                    "EventTimeStamp"
+                                  ],
+                                  "inputType": "ATTRIBUTES"
+                                },
+                                {
+                                  "operation": {
+                                    "operator": "ARG_MAX",
+                                    "arguments": [
+                                      {
+                                        "operation": {
+                                          "operator": "PASSED_ARGUMENT",
+                                          "arguments": [
+                                            {
+                                              "value": "timeSinceNow",
+                                              "inputType": "VALUE"
+                                            }
+                                          ]
+                                        },
+                                        "inputType": "OPERATION"
+                                      },
+                                      {
+                                        "datasetDefInput": {
+                                          "inputType": "ENTITY",
+                                          "entityName": "transaction",
+                                          "interactionType": [
+                                            "CRITERIA"
+                                          ],
+                                          "outputAttributes": [
+                                            {
+                                              "name": "TransactionTimeStamp",
+                                              "entity": "transaction"
+                                            }
+                                          ],
+                                          "joinAttributes": [
+                                            {
+                                              "leftAttribute": {
+                                                "name": "CustomerID",
+                                                "entity": "event"
+                                              },
+                                              "rightAttribute": {
+                                                "name": "CustomerID",
+                                                "entity": "transaction"
+                                              }
+                                            }
+                                          ],
+                                          "joinType": "LEFT_OUTER",
+                                          "operation": {
+                                            "operator": "LATEST",
+                                            "count": {
+                                              "value": "1",
+                                              "inputType": "VALUE"
+                                            },
+                                            "windowOperator": "ROW_NUMBER"
+                                          }
+                                        },
+                                        "inputType": "DATASET_DEF_INPUT"
+                                      }
+                                    ]
+                                  },
+                                  "inputType": "OPERATION"
+                                }
+                              ]
+                            },
+                            "inputType": "OPERATION"
+                          },
+                          {
+                            "operation": {
+                              "operator": "EQUALS",
+                              "arguments": [
+                                {
+                                  "attributes": [
+                                    "Type"
+                                  ],
+                                  "inputType": "ATTRIBUTES"
+                                },
+                                {
+                                  "value": "'cartUpdated'",
+                                  "inputType": "VALUE"
+                                }
+                              ]
+                            },
+                            "inputType": "OPERATION"
+                          },
+                          {
+                            "operation": {
+                              "operator": "NOT_EMPTY",
+                              "arguments": [
+                                {
+                                  "attributes": [
+                                    "ProductID"
+                                  ],
+                                  "inputType": "ATTRIBUTES"
+                                }
+                              ]
+                            },
+                            "inputType": "OPERATION"
+                          }
+                        ]
+                      },
+                      "inputType": "OPERATION"
+                    },
+                    "interactionType": [
+                      "CRITERIA"
+                    ],
+                    "operation": {
+                      "operator": "LAST",
+                      "windowOperator": "ROW_NUMBER"
+                    }
+                  },
+                  "inputType": "DATASET_DEF_INPUT"
+                },
+                {
+                  "datasetDefInput": {
+                    "inputType": "ENTITY",
+                    "entityName": "event",
+                    "filter": {
+                      "operation": {
+                        "operator": "GREATER_THAN",
+                        "arguments": [
+                          {
+                            "attributes": [
+                              "EventTimeStamp"
+                            ],
+                            "inputType": "ATTRIBUTES"
+                          },
+                          {
+                            "operation": {
+                              "operator": "SUBTRACT",
+                              "arguments": [
+                                {
+                                  "operation": {
+                                    "operator": "NOW",
+                                    "arguments": []
+                                  },
+                                  "inputType": "OPERATION"
+                                },
+                                {
+                                  "value": "1800000",
+                                  "inputType": "VALUE"
+                                }
+                              ]
+                            },
+                            "inputType": "OPERATION"
+                          }
+                        ]
+                      },
+                      "inputType": "OPERATION"
+                    }
+                  },
+                  "inputType": "DATASET_DEF_INPUT"
+                }
+              ]
+            }
+          },
+          "inputType": "DATASET_DEF_INPUT"
+        },
+        "interactionType": [
+          "CRITERIA"
+        ],
+        "outputAttributes": [
+          {
+            "name": "MasterCustomerID",
+            "entity": "customersummary"
+          }
+        ],
+        "operation": {
+          "operator": "DISTINCT"
+        }
+      },
+      "isOpaque": true,
+      "arguments": [
+        {
+          "argumentName": "timeSinceNow",
+          "expression": {
+            "operation": {
+              "operator": "SUBTRACT",
+              "arguments": [
+                {
+                  "operation": {
+                    "operator": "NOW",
+                    "arguments": []
+                  },
+                  "inputType": "OPERATION"
+                },
+                {
+                  "value": "86400000",
+                  "inputType": "VALUE"
+                }
+              ]
+            },
+            "inputType": "OPERATION"
+          }
+        }
+      ],
+      "displayElements": [
+        {
+          "displayType": "TEXT",
+          "displayText": "Abandoned their cart in the last"
+        },
+        {
+          "displayType": "INPUT",
+          "displayText": "",
+          "dataType": "DATE_TIME",
+          "argumentName": "timeSinceNow"
+        },
+        {
+          "displayType": "TEXT",
+          "displayText": "hours"
+        }
+      ],
+      "category": "AudienceDef",
+      "opaque": true,
+      "links": []
+    },
+    {
+      "name": "First Order Anniversary",
+      "description": "Customers who bought only once a year ago",
+      "version": 0,
+      "tenantId": 0,
+      "type": "CUSTOMER",
+      "input": {
+        "inputType": "ENTITY",
+        "entityName": "customersummary",
+        "filter": {
+          "operation": {
+            "operator": "AND",
+            "arguments": [
+              {
+                "operation": {
+                  "operator": "PASSED_ARGUMENT",
+                  "arguments": [
+                    {
+                      "value": "tenuredays",
+                      "inputType": "VALUE"
+                    }
+                  ]
+                },
+                "inputType": "OPERATION"
+              },
+              {
+                "operation": {
+                  "operator": "PASSED_ARGUMENT",
+                  "arguments": [
+                    {
+                      "value": "TotalTransactionCount",
+                      "inputType": "VALUE"
+                    }
+                  ]
+                },
+                "inputType": "OPERATION"
+              }
+            ]
+          },
+          "inputType": "OPERATION"
+        },
+        "interactionType": [
+          "CRITERIA"
+        ],
+        "outputAttributes": [
+          {
+            "name": "MasterCustomerID",
+            "entity": "customersummary"
+          }
+        ]
+      },
+      "isOpaque": true,
+      "arguments": [
+        {
+          "argumentName": "tenuredays",
+          "expression": {
+            "operation": {
+              "operator": "EQUALS",
+              "arguments": [
+                {
+                  "attributes": [
+                    "tenuredays"
+                  ],
+                  "inputType": "ATTRIBUTES"
+                },
+                {
+                  "value": "365",
+                  "inputType": "VALUE"
+                }
+              ]
+            },
+            "inputType": "OPERATION"
+          }
+        },
+        {
+          "argumentName": "TotalTransactionCount",
+          "expression": {
+            "operation": {
+              "operator": "EQUALS",
+              "arguments": [
+                {
+                  "attributes": [
+                    "TotalTransactionCount"
+                  ],
+                  "inputType": "ATTRIBUTES"
+                },
+                {
+                  "value": "1",
+                  "inputType": "VALUE"
+                }
+              ]
+            },
+            "inputType": "OPERATION"
+          }
+        }
+      ],
+      "displayElements": [
+        {
+          "displayType": "INPUT",
+          "displayText": "",
+          "dataType": "DATE_TIME",
+          "argumentName": "tenuredays"
+        },
+        {
+          "displayType": "TEXT",
+          "displayText": "since last purchase and"
+        },
+        {
+          "displayType": "INPUT",
+          "displayText": "",
+          "dataType": "INTEGER",
+          "argumentName": "TotalTransactionCount"
+        },
+        {
+          "displayType": "TEXT",
+          "displayText": "total orders"
+        }
+      ],
+      "category": "AudienceDef",
+      "opaque": true,
+      "links": []
+    }
+  ],
+  "filesDatasetDefs": [
+    {
+      "mimeType": "text/datasetDef",
+      "name": "Customers who purchased a product in a category",
+      "description": "Customers who purchased a product in a category",
+      "parentResourceId": null,
+      "referenceEntityId": null
+    },
+    {
+      "mimeType": "text/datasetDef",
+      "name": "Customers who abandoned their cart",
+      "description": "Customers who abandoned their cart",
+      "parentResourceId": null,
+      "referenceEntityId": null
+    },
+    {
+      "mimeType": "text/datasetDef",
+      "name": "First Order Anniversary",
+      "description": "First Order Anniversary",
+      "parentResourceId": null,
+      "referenceEntityId": null
+    }
+  ],
+  "campaignDefs": [
+    {
+      "name": "Abandoned Cart",
+      "description": "Campaign for customers who have abandoned their web cart in a given time period.",
+      "version": 0,
+      "tenantId": 0,
+      "audienceDef": {
+        "name": "Customers who abandoned their cart",
+        "description": "Customers who abandoned their cart",
+        "version": 0,
+        "tenantId": 0,
+        "type": "CUSTOMER",
+        "input": {
+          "inputType": "ENTITY",
+          "entityName": "customersummary",
+          "filter": {
+            "datasetDefInput": {
+              "inputType": "ENTITY",
+              "entityName": "customer",
+              "interactionType": [
+                "CRITERIA"
+              ],
+              "setOperation": {
+                "operator": "EXCLUDE",
+                "arguments": [
+                  {
+                    "datasetDefInput": {
+                      "inputType": "ENTITY",
+                      "entityName": "event",
+                      "filter": {
+                        "operation": {
+                          "operator": "AND",
+                          "arguments": [
+                            {
+                              "operation": {
+                                "operator": "GREATER_THAN",
+                                "arguments": [
+                                  {
+                                    "attributes": [
+                                      "EventTimeStamp"
+                                    ],
+                                    "inputType": "ATTRIBUTES"
+                                  },
+                                  {
+                                    "operation": {
+                                      "operator": "ARG_MAX",
+                                      "arguments": [
+                                        {
+                                          "operation": {
+                                            "operator": "PASSED_ARGUMENT",
+                                            "arguments": [
+                                              {
+                                                "value": "timeSinceNow",
+                                                "inputType": "VALUE"
+                                              }
+                                            ]
+                                          },
+                                          "inputType": "OPERATION"
+                                        },
+                                        {
+                                          "datasetDefInput": {
+                                            "inputType": "ENTITY",
+                                            "entityName": "transaction",
+                                            "interactionType": [
+                                              "CRITERIA"
+                                            ],
+                                            "outputAttributes": [
+                                              {
+                                                "name": "TransactionTimeStamp",
+                                                "entity": "transaction"
+                                              }
+                                            ],
+                                            "joinAttributes": [
+                                              {
+                                                "leftAttribute": {
+                                                  "name": "CustomerID",
+                                                  "entity": "event"
+                                                },
+                                                "rightAttribute": {
+                                                  "name": "CustomerID",
+                                                  "entity": "transaction"
+                                                }
+                                              }
+                                            ],
+                                            "joinType": "LEFT_OUTER",
+                                            "operation": {
+                                              "operator": "LATEST",
+                                              "count": {
+                                                "value": "1",
+                                                "inputType": "VALUE"
+                                              },
+                                              "windowOperator": "ROW_NUMBER"
+                                            }
+                                          },
+                                          "inputType": "DATASET_DEF_INPUT"
+                                        }
+                                      ]
+                                    },
+                                    "inputType": "OPERATION"
+                                  }
+                                ]
+                              },
+                              "inputType": "OPERATION"
+                            },
+                            {
+                              "operation": {
+                                "operator": "EQUALS",
+                                "arguments": [
+                                  {
+                                    "attributes": [
+                                      "Type"
+                                    ],
+                                    "inputType": "ATTRIBUTES"
+                                  },
+                                  {
+                                    "value": "'cartUpdated'",
+                                    "inputType": "VALUE"
+                                  }
+                                ]
+                              },
+                              "inputType": "OPERATION"
+                            },
+                            {
+                              "operation": {
+                                "operator": "NOT_EMPTY",
+                                "arguments": [
+                                  {
+                                    "attributes": [
+                                      "ProductID"
+                                    ],
+                                    "inputType": "ATTRIBUTES"
+                                  }
+                                ]
+                              },
+                              "inputType": "OPERATION"
+                            }
+                          ]
+                        },
+                        "inputType": "OPERATION"
+                      },
+                      "interactionType": [
+                        "CRITERIA"
+                      ],
+                      "operation": {
+                        "operator": "LAST",
+                        "windowOperator": "ROW_NUMBER"
+                      }
+                    },
+                    "inputType": "DATASET_DEF_INPUT"
+                  },
+                  {
+                    "datasetDefInput": {
+                      "inputType": "ENTITY",
+                      "entityName": "event",
+                      "filter": {
+                        "operation": {
+                          "operator": "GREATER_THAN",
+                          "arguments": [
+                            {
+                              "attributes": [
+                                "EventTimeStamp"
+                              ],
+                              "inputType": "ATTRIBUTES"
+                            },
+                            {
+                              "operation": {
+                                "operator": "SUBTRACT",
+                                "arguments": [
+                                  {
+                                    "operation": {
+                                      "operator": "NOW",
+                                      "arguments": []
+                                    },
+                                    "inputType": "OPERATION"
+                                  },
+                                  {
+                                    "value": "1800000",
+                                    "inputType": "VALUE"
+                                  }
+                                ]
+                              },
+                              "inputType": "OPERATION"
+                            }
+                          ]
+                        },
+                        "inputType": "OPERATION"
+                      }
+                    },
+                    "inputType": "DATASET_DEF_INPUT"
+                  }
+                ]
+              }
+            },
+            "inputType": "DATASET_DEF_INPUT"
+          },
+          "interactionType": [
+            "CRITERIA"
+          ],
+          "outputAttributes": [
+            {
+              "name": "MasterCustomerID",
+              "entity": "customersummary"
+            }
+          ],
+          "operation": {
+            "operator": "DISTINCT"
+          }
+        },
+        "isOpaque": true,
+        "arguments": [
+          {
+            "argumentName": "timeSinceNow",
+            "expression": {
+              "operation": {
+                "operator": "SUBTRACT",
+                "arguments": [
+                  {
+                    "operation": {
+                      "operator": "NOW",
+                      "arguments": []
+                    },
+                    "inputType": "OPERATION"
+                  },
+                  {
+                    "value": "86400000",
+                    "inputType": "VALUE"
+                  }
+                ]
+              },
+              "inputType": "OPERATION"
+            }
+          }
+        ],
+        "displayElements": [
+          {
+            "displayType": "TEXT",
+            "displayText": "Abandoned their cart in the last"
+          },
+          {
+            "displayType": "INPUT",
+            "displayText": "",
+            "dataType": "DATE_TIME",
+            "argumentName": "timeSinceNow"
+          },
+          {
+            "displayType": "TEXT",
+            "displayText": "hours"
+          }
+        ],
+        "category": "AudienceDef",
+        "opaque": true,
+        "links": []
+      },
+      "content": [
+        {
+          "name": "Last Abandoned Products",
+          "description": "Last Abandoned Products",
+          "version": 0,
+          "tenantId": 0,
+          "type": "CUSTOMER",
+          "input": {
+            "inputType": "ENTITY",
+            "entityName": "customersummary",
+            "filter": {
+              "datasetDefInput": {
+                "inputType": "ENTITY",
+                "entityName": "customer",
+                "filter": {
+                  "datasetDefInput": {
+                    "inputType": "ENTITY",
+                    "entityName": "event",
+                    "alias": "cartEvent",
+                    "filter": {
+                      "operation": {
+                        "operator": "AND",
+                        "arguments": [
+                          {
+                            "operation": {
+                              "operator": "EQUALS",
+                              "arguments": [
+                                {
+                                  "attributes": [
+                                    "type"
+                                  ],
+                                  "inputType": "ATTRIBUTES"
+                                },
+                                {
+                                  "value": "'cartUpdated'",
+                                  "inputType": "VALUE"
+                                }
+                              ]
+                            },
+                            "inputType": "OPERATION"
+                          },
+                          {
+                            "datasetDefInput": {
+                              "inputType": "ENTITY",
+                              "entityName": "product",
+                              "interactionType": [
+                                "OUTPUT_ATTRIBUTES"
+                              ],
+                              "outputAttributes": [
+                                {
+                                  "name": "ID",
+                                  "entity": "product"
+                                },
+                                {
+                                  "name": "name",
+                                  "entity": "product"
+                                },
+                                {
+                                  "name": "ProductURL",
+                                  "entity": "product"
+                                },
+                                {
+                                  "name": "ImageURL",
+                                  "entity": "product"
+                                }
+                              ]
+                            },
+                            "inputType": "DATASET_DEF_INPUT"
+                          }
+                        ]
+                      },
+                      "inputType": "OPERATION"
+                    },
+                    "operation": {
+                      "operator": "LAST",
+                      "count": {
+                        "operation": {
+                          "operator": "PASSED_ARGUMENT",
+                          "arguments": [
+                            {
+                              "value": "CART_COUNT",
+                              "inputType": "VALUE"
+                            }
+                          ]
+                        },
+                        "inputType": "OPERATION"
+                      },
+                      "limit": {
+                        "value": "4",
+                        "inputType": "VALUE"
+                      },
+                      "windowOperator": "RANK"
+                    }
+                  },
+                  "inputType": "DATASET_DEF_INPUT"
+                },
+                "interactionType": [
+                  "NONE"
+                ]
+              },
+              "inputType": "DATASET_DEF_INPUT"
+            },
+            "interactionType": [
+              "NONE"
+            ],
+            "outputAttributes": [
+              {
+                "name": "MasterCustomerID",
+                "entity": "customersummary"
+              },
+              {
+                "name": "$LIMIT_COUNT",
+                "entity": "cartEvent"
+              },
+              {
+                "name": "ID",
+                "entity": "product"
+              },
+              {
+                "name": "name",
+                "entity": "product"
+              },
+              {
+                "name": "ProductURL",
+                "entity": "product"
+              },
+              {
+                "name": "ImageURL",
+                "entity": "product"
+              }
+            ]
+          },
+          "isOpaque": true,
+          "arguments": [
+            {
+              "argumentName": "CART_COUNT",
+              "expression": {
+                "value": "1",
+                "inputType": "VALUE"
+              }
+            }
+          ],
+          "displayElements": [
+            {
+              "displayType": "TEXT",
+              "displayText": "Last"
+            },
+            {
+              "displayType": "INPUT",
+              "dataType": "TEXT",
+              "argumentName": "PRODUCT_COUNT"
+            },
+            {
+              "displayType": "TEXT",
+              "displayText": "abandoned products"
+            }
+          ],
+          "category": "NQ",
+          "opaque": true,
+          "links": []
+        }
+      ],
+      "audienceContent": [
+        {
+          "name": "PrimaryBrand",
+          "entity": "customersummary"
+        },
+        {
+          "name": "FirstTransactionDate",
+          "entity": "customersummary"
+        }
+      ],
+      "connectorId": 0,
+      "connectorListId": 0,
+      "links": []
+    },
+    {
+      "name": "Purchased in Category",
+      "description": "Campaign for customers who have purchased a product in a specified category.",
+      "version": 0,
+      "tenantId": 0,
+      "audienceDef": {
+        "name": "Customers who purchased a product in a category",
+        "description": "Purchased a product in category",
+        "version": 0,
+        "tenantId": 0,
+        "type": "CUSTOMER",
+        "input": {
+          "inputType": "ENTITY",
+          "entityName": "customersummary",
+          "filter": {
+            "datasetDefInput": {
+              "inputType": "ENTITY",
+              "entityName": "customer",
+              "filter": {
+                "datasetDefInput": {
+                  "inputType": "ENTITY",
+                  "entityName": "transaction",
+                  "filter": {
+                    "operation": {
+                      "operator": "AND",
+                      "arguments": [
+                        {
+                          "operation": {
+                            "operator": "GREATER_THAN",
+                            "arguments": [
+                              {
+                                "attributes": [
+                                  "total"
+                                ],
+                                "inputType": "ATTRIBUTES"
+                              },
+                              {
+                                "value": "100",
+                                "inputType": "VALUE"
+                              }
+                            ]
+                          },
+                          "inputType": "OPERATION"
+                        },
+                        {
+                          "datasetDefInput": {
+                            "inputType": "ENTITY",
+                            "entityName": "TransactionItem",
+                            "filter": {
+                              "datasetDefInput": {
+                                "inputType": "ENTITY",
+                                "entityName": "Product",
+                                "filter": {
+                                  "datasetDefInput": {
+                                    "inputType": "ENTITY",
+                                    "entityName": "ProductCategory",
+                                    "filter": {
+                                      "operation": {
+                                        "operator": "EQUALS",
+                                        "arguments": [
+                                          {
+                                            "attributes": [
+                                              "name"
+                                            ],
+                                            "inputType": "ATTRIBUTES"
+                                          },
+                                          {
+                                            "operation": {
+                                              "operator": "PASSED_ARGUMENT",
+                                              "arguments": [
+                                                {
+                                                  "value": "CATNAME",
+                                                  "inputType": "VALUE"
+                                                }
+                                              ]
+                                            },
+                                            "inputType": "OPERATION"
+                                          }
+                                        ]
+                                      },
+                                      "inputType": "OPERATION"
+                                    }
+                                  },
+                                  "inputType": "DATASET_DEF_INPUT"
+                                },
+                                "interactionType": [
+                                  "CRITERIA"
+                                ]
+                              },
+                              "inputType": "DATASET_DEF_INPUT"
+                            },
+                            "interactionType": [
+                              "CRITERIA"
+                            ]
+                          },
+                          "inputType": "DATASET_DEF_INPUT"
+                        }
+                      ]
+                    },
+                    "inputType": "OPERATION"
+                  },
+                  "interactionType": [
+                    "CRITERIA"
+                  ]
+                },
+                "inputType": "DATASET_DEF_INPUT"
+              },
+              "interactionType": [
+                "CRITERIA"
+              ]
+            },
+            "inputType": "DATASET_DEF_INPUT"
+          },
+          "interactionType": [
+            "CRITERIA"
+          ],
+          "outputAttributes": [
+            {
+              "name": "MasterCustomerID",
+              "entity": "customersummary"
+            }
+          ],
+          "operation": {
+            "operator": "DISTINCT"
+          }
+        },
+        "isOpaque": true,
+        "arguments": [
+          {
+            "argumentName": "CATNAME",
+            "expression": {
+              "value": "'Wireless Speakers'",
+              "inputType": "VALUE"
+            }
+          }
+        ],
+        "displayElements": [
+          {
+            "displayType": "TEXT",
+            "displayText": "Purchased an item in category with name"
+          },
+          {
+            "displayType": "INPUT",
+            "dataType": "TEXT",
+            "argumentName": "CATNAME"
+          }
+        ],
+        "category": "AudienceDef",
+        "opaque": true,
+        "links": []
+      },
+      "content": [
+        {
+          "name": "Last Products Browsed",
+          "description": "Last Products Browsed",
+          "version": 0,
+          "tenantId": 0,
+          "type": "CUSTOMER",
+          "input": {
+            "inputType": "ENTITY",
+            "entityName": "customersummary",
+            "filter": {
+              "datasetDefInput": {
+                "inputType": "ENTITY",
+                "entityName": "customer",
+                "filter": {
+                  "datasetDefInput": {
+                    "inputType": "ENTITY",
+                    "entityName": "event",
+                    "filter": {
+                      "operation": {
+                        "operator": "AND",
+                        "arguments": [
+                          {
+                            "operation": {
+                              "operator": "EQUALS",
+                              "arguments": [
+                                {
+                                  "attributes": [
+                                    "Type"
+                                  ],
+                                  "inputType": "ATTRIBUTES"
+                                },
+                                {
+                                  "value": "'productBrowsed'",
+                                  "inputType": "VALUE"
+                                }
+                              ]
+                            },
+                            "inputType": "OPERATION"
+                          },
+                          {
+                            "datasetDefInput": {
+                              "inputType": "ENTITY",
+                              "entityName": "product",
+                              "interactionType": [
+                                "OUTPUT_ATTRIBUTES"
+                              ],
+                              "outputAttributes": [
+                                {
+                                  "name": "ID",
+                                  "entity": "product"
+                                },
+                                {
+                                  "name": "name",
+                                  "entity": "product"
+                                },
+                                {
+                                  "name": "ProductURL",
+                                  "entity": "product"
+                                },
+                                {
+                                  "name": "ImageURL",
+                                  "entity": "product"
+                                }
+                              ]
+                            },
+                            "inputType": "DATASET_DEF_INPUT"
+                          }
+                        ]
+                      },
+                      "inputType": "OPERATION"
+                    },
+                    "operation": {
+                      "operator": "LAST",
+                      "count": {
+                        "operation": {
+                          "operator": "PASSED_ARGUMENT",
+                          "arguments": [
+                            {
+                              "value": "PRODUCT_COUNT",
+                              "inputType": "VALUE"
+                            }
+                          ]
+                        },
+                        "inputType": "OPERATION"
+                      },
+                      "windowOperator": "ROW_NUMBER"
+                    }
+                  },
+                  "inputType": "DATASET_DEF_INPUT"
+                }
+              },
+              "inputType": "DATASET_DEF_INPUT"
+            },
+            "outputAttributes": [
+              {
+                "name": "MasterCustomerID",
+                "entity": "customersummary"
+              },
+              {
+                "name": "ID",
+                "entity": "product"
+              },
+              {
+                "name": "name",
+                "entity": "product"
+              },
+              {
+                "name": "ProductURL",
+                "entity": "product"
+              },
+              {
+                "name": "ImageURL",
+                "entity": "product"
+              }
+            ]
+          },
+          "isOpaque": true,
+          "arguments": [
+            {
+              "argumentName": "PRODUCT_COUNT",
+              "expression": {
+                "value": "4",
+                "inputType": "VALUE"
+              }
+            }
+          ],
+          "displayElements": [
+            {
+              "displayType": "TEXT",
+              "displayText": "Last"
+            },
+            {
+              "displayType": "INPUT",
+              "dataType": "TEXT",
+              "argumentName": "PRODUCT_COUNT"
+            },
+            {
+              "displayType": "TEXT",
+              "displayText": "products browsed"
+            }
+          ],
+          "category": "NQ",
+          "opaque": true,
+          "links": []
+        }
+      ],
+      "audienceContent": [
+        {
+          "name": "PrimaryBrand",
+          "entity": "customersummary"
+        },
+        {
+          "name": "FirstTransactionDate",
+          "entity": "customersummary"
+        }
+      ],
+      "connectorId": 0,
+      "connectorListId": 0,
+      "links": []
+    }
+  ],
+  "fileCampaignDefs": [
+    {
+      "mimeType": "text/campaignDef",
+      "name": "Abandoned Cart",
+      "description": "Customers who abandoned their cart",
+      "parentResourceId": null,
+      "referenceEntityId": null
+    },
+    {
+      "mimeType": "text/campaignDef",
+      "name": "Customers who Purchased in a Category",
+      "description": "Customers who Purchased in a Category",
+      "parentResourceId": null,
+      "referenceEntityId": null
+    }
+  ]
+}
